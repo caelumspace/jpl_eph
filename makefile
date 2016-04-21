@@ -32,6 +32,18 @@ endif
 
 all: asc2eph$(EXE) dump_eph$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) testeph$(EXE) sub_eph$(EXE)
 
+install:
+	cp jpleph.h /usr/local/include
+	cp libjpl.a /usr/local/lib
+
+uninstall:
+	rm /usr/local/include
+	rm /usr/local/lib
+
+libjpl.a: jpleph.o
+	$(RM) libjpl.a
+	ar rv libjpl.a jpleph.o
+
 .cpp.o:
 	$(CC) $(CFLAGS) -c $<
 
@@ -41,23 +53,23 @@ asc2eph$(EXE):          asc2eph.o f_strtod.o
 ftest$(EXE):          ftest.o f_strtod.o
 	$(CC) -o ftest$(EXE) ftest.o f_strtod.o
 
-eph2asc$(EXE):          eph2asc.o jpleph.o
-	$(CC) -o eph2asc$(EXE) eph2asc.o jpleph.o $(LIB)
+eph2asc$(EXE):          eph2asc.o libjpl.a
+	$(CC) -o eph2asc$(EXE) eph2asc.o libjpl.a $(LIB)
 
-dump_eph$(EXE):          dump_eph.o jpleph.o
-	$(CC) -o dump_eph$(EXE) dump_eph.o jpleph.o $(LIB)
+dump_eph$(EXE):          dump_eph.o libjpl.a
+	$(CC) -o dump_eph$(EXE) dump_eph.o libjpl.a $(LIB)
 
-merge_de$(EXE):          merge_de.o jpleph.o
-	$(CC) -o merge_de$(EXE) merge_de.o jpleph.o $(LIB)
+merge_de$(EXE):          merge_de.o libjpl.a
+	$(CC) -o merge_de$(EXE) merge_de.o libjpl.a $(LIB)
 
-sub_eph$(EXE):          sub_eph.o jpleph.o lunar.a
-	$(CC) -o sub_eph$(EXE) sub_eph.o jpleph.o lunar.a $(LIB)
+sub_eph$(EXE):          sub_eph.o libjpl.a
+	$(CC) -o sub_eph$(EXE) sub_eph.o libjpl.a -llunar $(LIB)
 
 sub_eph.o: sub_eph.cpp
 	$(CC) $(CFLAGS) -c -DTEST_MAIN sub_eph.cpp
 
-testeph$(EXE):          testeph.o jpleph.o
-	$(CC) -o testeph$(EXE) testeph.o jpleph.o $(LIB)
+testeph$(EXE):          testeph.o libjpl.a
+	$(CC) -o testeph$(EXE) testeph.o libjpl.a $(LIB)
 
 clean:
 	$(RM) *.o
@@ -68,3 +80,4 @@ clean:
 	$(RM) merge_de$(EXE)
 	$(RM) sub_eph$(EXE)
 	$(RM) testeph$(EXE)
+	$(RM) libjpl.a
