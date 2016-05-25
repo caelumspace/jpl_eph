@@ -30,7 +30,9 @@
 asc2eph
 dump_eph
 eph2asc
+eph2
 ftest
 merge_de
+sub_eph
 testeph
 
