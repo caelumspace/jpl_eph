@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #include <stdint.h>
 #include <stddef.h>     /* for NULL definition */
 #include <ctype.h>
+#include <float.h>
 
 #ifdef __WATCOMC__
    #include <stdbool.h>
@@ -61,7 +62,26 @@ inline long double ten_power( int exponent)
       {
       int i;
       static const long double big_multipliers[] = { 1e+16L, 1e+32L, 1e+64L,
-            1e+128L, 1e+256L, 1e+512L, 1e+1024L, 1e+2048L, 1e+4096L };
+            1e+128L
+#ifndef LDBL_MAX_10_EXP
+   #error LDBL_MAX_10_EXP undefined!
+#endif
+#if( LDBL_MAX_10_EXP >= 256)
+          , 1e+256L
+#endif
+#if( LDBL_MAX_10_EXP >= 512)
+          , 1e+512L
+#endif
+#if( LDBL_MAX_10_EXP >= 1024)
+          , 1e+1024L
+#endif
+#if( LDBL_MAX_10_EXP >= 2048)
+          , 1e+2048L
+#endif
+#if( LDBL_MAX_10_EXP >= 4096)
+          , 1e+4096L
+#endif
+         };
 
       exponent &= 0x1ff;
       for( i = 0; exponent; i++, exponent >>= 1)
@@ -116,6 +136,15 @@ Which is why there's a bit of code starting with 'if( exponent >= 4096)'.
 That will make the values to be multiplied 3.141592e+4102 and 10^-856,
 both within the range of long doubles.
 
+   -- Microsoft doesn't "get" 80-bit doubles;  to them,  long doubles
+and doubles are the same thing.  (Insert anti-MS rant here;  I doubt
+I can use any profanity for them that hasn't already been done elsewhere.)
+When compiled on an MS compiler,  LDBL_MAX_10_EXP will be 308;  on
+everything else I've seen,  it'll be 4932.  Suitable #ifs and #ifdefs
+have been added to handle this... at least for those two cases,  which
+are the only two I can test.  It does lay the groundwork for machines
+with 128-bit floats or those limited to 32-bit floats.
+
    -- In assembling the digits into an integer value,  we can handle
 integers up to INT64_MAX / 10 - 1 without overflowing.  Beyond that,
 we start putting the digits into 'part_two',  and keep track of how
@@ -153,6 +182,14 @@ fail,  then turn those very unusual cases over to "standard" strtold.
 http://www.netlib.org/fp/dtoa.c
 
 */
+
+#if( LDBL_MAX_10_EXP >= 4096)
+   #define OVER_THE_TOP_EXPONENT 4096
+   #define OVER_THE_TOP_VALUE 1e+4096L
+#else
+   #define OVER_THE_TOP_EXPONENT 256
+   #define OVER_THE_TOP_VALUE 1e+256L
+#endif
 
 long double fast_strtold( const char *iptr, char **endptr)
 {
@@ -246,13 +283,13 @@ long double fast_strtold( const char *iptr, char **endptr)
       }
    else
       exponent_is_negative = false;
-   if( exponent >= 4096)
+   if( exponent >= OVER_THE_TOP_EXPONENT)
       {
       if( exponent_is_negative)
-         d_rval /= 1e+4096L;
+         d_rval /= OVER_THE_TOP_VALUE;
       else
-         d_rval *= 1e+4096L;
-      exponent -= 4096;
+         d_rval *= OVER_THE_TOP_VALUE;
+      exponent -= OVER_THE_TOP_EXPONENT;
       }
    ten_pow = ten_power( exponent);
    if( exponent_is_negative)
