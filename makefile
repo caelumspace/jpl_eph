@@ -8,22 +8,18 @@
 #	'MSWIN' = compile for Windows,  using MinGW,  on a Windows machine
 #	'CLANG' = use clang instead of GCC;  Linux/BSD only
 # None of these: compile using g++ on Linux or BSD
-# See 'bsdmake' for BSD (same,  except .ifdef/.endif instead of ifdef/endif)
 
 CFLAGS=-Wall -O3 -Wextra -pedantic
+CC=g++
+RM=rm
 
 ifdef CLANG
 	CC=clang
 	LIB=-lm
-	else
-	CC=g++
-	LIB=
 endif
 
 ifdef MSWIN
 	EXE=.exe
-else
-	EXE=
 endif
 
 ifdef XCOMPILE
