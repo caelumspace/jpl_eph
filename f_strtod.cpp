@@ -49,6 +49,10 @@ long double fast_strtold( const char *iptr, char **endptr);
    # define MAX_STORED_DIGITS     UINT64_MAX
 #endif
 
+#ifndef UINT64_MAX
+#define UINT64_MAX ((uint64_t)-1)
+#endif
+
 inline long double ten_power( int exponent)
 {
    static const long double multipliers[16] = { 1.L, 10.L, 100.L, 1000.L,
