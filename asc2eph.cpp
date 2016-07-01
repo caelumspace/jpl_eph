@@ -92,7 +92,7 @@ does the same thing. */
 #include <time.h>
 #include <assert.h>
 
-#ifdef __linux
+#ifndef _MAX_PATH
    #include <limits.h>
    #define _MAX_PATH   PATH_MAX
 #endif
