@@ -11,7 +11,7 @@
 
 CFLAGS=-Wall -O3 -Wextra -pedantic
 CC=g++
-RM=rm
+RM=-rm
 
 ifdef CLANG
 	CC=clang
@@ -34,8 +34,8 @@ install:
 	cp libjpl.a /usr/local/lib
 
 uninstall:
-	rm /usr/local/include
-	rm /usr/local/lib
+	-rm /usr/local/include
+	-rm /usr/local/lib
 
 libjpl.a: jpleph.o
 	$(RM) libjpl.a
