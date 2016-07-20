@@ -256,7 +256,7 @@ long double fast_strtold( const char *iptr, char **endptr)
    if( !digits_found)      /* must be at least one digit */
       return( 0.);
    if( decimal_point)
-      downshift = (iptr - decimal_point);
+      downshift = (int)( iptr - decimal_point);
    if( *iptr == 'e' || *iptr == 'E')
       {
       const char *iptr2 = iptr;
