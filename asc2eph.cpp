@@ -208,6 +208,7 @@ static void error_msg( void)
    printf( "to the JPL ASCII files (optionally;  default is the current path)\n");
    printf( "followed by any of the following options:\n\n");
    printf( "   -d(number)     Specifies the DE number (200,  405,  406,  etc.)\n");
+   printf( "   -h(filename)   Specifies header name (default is header.xxx)\n");
    printf( "   -o(filename)   Specifies the output filename (default is jpleph.xxx)\n");
    printf( "   -r(JD1,JD2)    (or year1, year2) Specifies output range.\n");
    printf( "   -v             Verbose mode\n");
@@ -278,11 +279,12 @@ int main( const int argc, const char **argv)
     char path_to_ascii_files[_MAX_PATH];
     char output_filename[_MAX_PATH];
     double jd1 = -99999999., jd2 = 99999999., db2z, *db;
-    unsigned i, j, ksize;
+    size_t i, j;
+    unsigned ksize, n;
     const char *de_num = "405";
     int year;
-    unsigned n, nrout, ncoeff, nrw, out, last;
-    unsigned n_padding_zeroes;
+    unsigned nrout, ncoeff, nrw, last;
+    size_t out, n_padding_zeroes;
     int year_start, year_end, year_step;
     int verbose = 0;
     FILE *ifile, *ofile;
@@ -290,6 +292,7 @@ int main( const int argc, const char **argv)
     double *cval;
     char *zero_padding_buffer;
     char *cnames;
+    const char *override_header_name = NULL;
     int32_t rpt[3];      /* Pointers to # coeffs for lunar Euler angle rates */
     int32_t tpt[3];      /* Pointers to # coeffs for TT-TDB */
 
@@ -307,6 +310,9 @@ int main( const int argc, const char **argv)
              {
              case 'd':
                 de_num = argv[i] + 2;
+                break;
+             case 'h':
+                override_header_name = argv[i] + 2;
                 break;
              case 'r':
                 sscanf( argv[i] + 2, "%lf,%lf", &jd1, &jd2);
@@ -343,7 +349,10 @@ int main( const int argc, const char **argv)
 #else
       strcat( path_to_ascii_files, "\\");
 #endif
-   sprintf( buff, "%sheader.%s", path_to_ascii_files, de_num);
+   if( override_header_name)
+      sprintf( buff, "%s%s", path_to_ascii_files, override_header_name);
+   else
+      sprintf( buff, "%sheader.%s", path_to_ascii_files, de_num);
 /****************************************************************************/
    ifile = fopen( buff, "rb");
    if( !ifile)
@@ -362,7 +371,7 @@ int main( const int argc, const char **argv)
    if( fscanf( ifile,"KSIZE= %u NCOEFF= %u", &ksize, &ncoeff) != 2)
       errprt( 1000, "KSIZE/NCOEFF fail\n");
    if( verbose)
-      printf( "KSIZE = %6d  NCOEFF= %6d", ksize, ncoeff);
+      printf( "KSIZE = %6u  NCOEFF= %6u", (unsigned)ksize, ncoeff);
    db = (double *)malloc( (ncoeff + 3) * sizeof( double));
    zero_padding_buffer = (char *)calloc( ksize, NRECL);
    if( !db || !zero_padding_buffer)
@@ -420,7 +429,7 @@ int main( const int argc, const char **argv)
          }
    if( verbose > 1)
       printf( "%d constants read\n", n);
-   rec1.ncon = n;
+   rec1.ncon = (int32_t)n;
             /* Most software written before DE-430 has a hard-coded    */
             /* limit of 400 ephemeris constants.  Some software may    */
             /* object to this;  if so,  uncomment the following line   */
@@ -439,13 +448,13 @@ int main( const int argc, const char **argv)
    while( i < n)
       {
       double temp[3];
-      unsigned n_found;
+      int n_found;
 
       if( !fgets( buff, 100, ifile))
          errprt( 1041, "fgets error");
       n_found = get_three_doubles( buff, temp);
-      if( n_found > n - i)
-         n_found = n - i;
+      if( n_found > (int)( n - i))
+         n_found = (int)( n - i);
       memcpy( cval + i, temp, n_found * sizeof( double));
       i += n_found;
       }
@@ -465,7 +474,7 @@ int main( const int argc, const char **argv)
 
    if( verbose > 1)
       {
-      const unsigned n_lines = n / 2 + (n & 1);
+      const size_t n_lines = n / 2 + (n & 1);
 
       for( i = 0; i < n_lines; i++)
          {
@@ -555,7 +564,7 @@ int main( const int argc, const char **argv)
             /* Could happen,  though,  so this assert should stay :        */
    if( n > JPL_MAX_N_CONSTANTS)
       {
-      const int write_size = (n - JPL_MAX_N_CONSTANTS) * 6;
+      const size_t write_size = (n - JPL_MAX_N_CONSTANTS) * 6;
 
       out = fwrite( cnames + JPL_MAX_N_CONSTANTS * 6, write_size, 1, ofile);
       if( out != 1)
@@ -649,7 +658,7 @@ int main( const int argc, const char **argv)
             {
             if( !fgets( buff, 100, ifile))
                {
-               printf( "Failed to read line %d!\n", j);
+               printf( "Failed to read line %u!\n", (unsigned)j);
                errprt( nrw, "BAD END OF FILE");
                }
             if( !j || db[1] > jd1)

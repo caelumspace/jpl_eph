@@ -178,8 +178,9 @@ int main( const int argc, const char **argv)
   char nams[JPL_MAX_N_CONSTANTS][6], buff[102];
   double vals[JPL_MAX_N_CONSTANTS];
   double max_err_found[10][6];
-  int i, j, line,  n_failures[10];
-  int n_constants, n_columns;
+  int line,  n_failures[10];
+  size_t i, j;
+  unsigned n_constants, n_columns;
   int output_frequency = 100;
   const char *ephfile_name = argv[1];
   double start_jd, end_jd;
@@ -217,7 +218,7 @@ int main( const int argc, const char **argv)
       for( j = 0; j < 6; j++)
          max_err_found[i][j] = 0.;
 
-   for( i = 2; i < argc; i++)
+   for( i = 2; i < (size_t)argc; i++)
       if( argv[i][0] == '-')
          switch( argv[i][1])
             {
@@ -251,8 +252,8 @@ int main( const int argc, const char **argv)
    else
       printf( "Ephemeris initialized\n");
 
-   n_constants = (int)jpl_get_long( ephem, JPL_EPHEM_N_CONSTANTS);
-   printf( "%d constants\n", n_constants);
+   n_constants = (unsigned)jpl_get_long( ephem, JPL_EPHEM_N_CONSTANTS);
+   printf( "%u constants\n", n_constants);
    if( n_constants > JPL_MAX_N_CONSTANTS)
       n_constants = JPL_MAX_N_CONSTANTS;
    start_jd = jpl_get_double( ephem, JPL_EPHEM_START_JD),
@@ -260,7 +261,7 @@ int main( const int argc, const char **argv)
    printf("%.9f  %.9f  %.9f\n", start_jd, end_jd,
                            jpl_get_double( ephem, JPL_EPHEM_STEP));
    n_columns = (n_constants + 1) / 2;
-   for( i = 0; i < n_columns; i++)
+   for( i = 0; i < (size_t)n_columns; i++)
       {
       printf("%.6s  %24.16E",nams[i],vals[i]);
       if( i + n_columns < n_constants)
@@ -416,7 +417,7 @@ int main( const int argc, const char **argv)
    for( i = 0; i < 10; i++)
       for( j = 0; j < 6; j++)
          if( max_err_found[i][j])
-            printf( "%d %d %.8e %c\n", i, j + 1, max_err_found[i][j],
+            printf( "%d %d %.8e %c\n", (int)i, (int)j + 1, max_err_found[i][j],
                        (max_err_found[i][j] > 0.) ? '*' : ' ');
 
    printf( "%d lines read and tested in %.3f seconds\n", line,
@@ -424,7 +425,7 @@ int main( const int argc, const char **argv)
    for( i = 0; i < n_errors; i++)
       if( n_failures[i])
          printf( "%d lines failed with error code %d ('%s').\n",
-                          n_failures[i], -i, error_messages[i]);
+                          n_failures[i], -(int)i, error_messages[i]);
    fclose( testfile);
    jpl_close_ephemeris( ephem);
    return( 0);
