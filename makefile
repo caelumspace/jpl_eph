@@ -41,8 +41,9 @@ endif
 all: asc2eph$(EXE) dump_eph$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) testeph$(EXE) sub_eph$(EXE)
 
 install:
-	-mkdir $(INSTALL_DIR)
+	-mkdir $(INSTALL_DIR)/include
 	cp jpleph.h $(INSTALL_DIR)/include
+	-mkdir $(INSTALL_DIR)/lib
 	cp libjpl.a $(INSTALL_DIR)/lib
 
 uninstall:
