@@ -9,9 +9,20 @@
 #	'CLANG' = use clang instead of GCC;  Linux/BSD only
 # None of these: compile using g++ on Linux or BSD
 
-CFLAGS=-Wall -O3 -Wextra -pedantic
+CFLAGS=-Wall -O3 -Wextra -pedantic -I $(INSTALL_DIR)/include
 CC=g++
 RM=-rm
+
+# You can have your include files in ~/include and libraries in
+# ~/lib,  in which case only the current user can use them;  or
+# (with root privileges) you can install them to /usr/local/include
+# and /usr/local/lib for all to enjoy.
+
+ifdef GLOBAL
+	INSTALL_DIR=/usr/local
+else
+	INSTALL_DIR=~
+endif
 
 ifdef CLANG
 	CC=clang
@@ -30,12 +41,13 @@ endif
 all: asc2eph$(EXE) dump_eph$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) testeph$(EXE) sub_eph$(EXE)
 
 install:
-	cp jpleph.h /usr/local/include
-	cp libjpl.a /usr/local/lib
+	-mkdir $(INSTALL_DIR)
+	cp jpleph.h $(INSTALL_DIR)/include
+	cp libjpl.a $(INSTALL_DIR)/lib
 
 uninstall:
-	-rm /usr/local/include
-	-rm /usr/local/lib
+	-rm $(INSTALL_DIR)/include/jpleph.h
+	-rm $(INSTALL_DIR)/lib/libjpl.a
 
 libjpl.a: jpleph.o
 	$(RM) libjpl.a
@@ -60,7 +72,7 @@ merge_de$(EXE):          merge_de.o libjpl.a
 	$(CC) -o merge_de$(EXE) merge_de.o libjpl.a $(LIB)
 
 sub_eph$(EXE):          sub_eph.o libjpl.a
-	$(CC) -o sub_eph$(EXE) sub_eph.o libjpl.a -llunar $(LIB)
+	$(CC) -o sub_eph$(EXE) sub_eph.o libjpl.a -L $(INSTALL_DIR)/lib -llunar $(LIB)
 
 sub_eph.o: sub_eph.cpp
 	$(CC) $(CFLAGS) -c -DTEST_MAIN sub_eph.cpp
