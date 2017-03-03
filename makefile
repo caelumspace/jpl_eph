@@ -51,7 +51,7 @@ uninstall:
 	-rm $(INSTALL_DIR)/lib/libjpl.a
 
 libjpl.a: jpleph.o
-	$(RM) libjpl.a
+	-$(RM) libjpl.a
 	ar rv libjpl.a jpleph.o
 
 .cpp.o:
