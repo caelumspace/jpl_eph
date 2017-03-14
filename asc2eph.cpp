@@ -653,7 +653,7 @@ int main( const int argc, const char **argv)
          if( 2 * ncoeff != ksize )
             errprt( ncoeff, "2*NCOEFF NOT EQUAL TO KSIZE");
 /* there is an integer multiply of 3 coefficients in source file */
-         last = ncoeff / 3 + 1;
+         last = (ncoeff + 2) / 3;
          for( j = 0; j < last; j++)
             {
             if( !fgets( buff, 100, ifile))
