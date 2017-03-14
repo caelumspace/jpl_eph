@@ -100,7 +100,10 @@ Bytes 0- 83:  first line ("JPL Planetary Ephemeris DExxx/LExxx")
          recsize = 8 * ncoeff;  ncoeff,  thus far,  has been...
          ncoeff = 773 for DE-102
          ncoeff = 826 for DE-200 & 202
-         ncoeff = 1018 for DE-403, 405, 406, 410, 414, 421, 422, 423, 424, 430, 431,
+         ncoeff = 1018 for DE-403, 405, 410, 414, 421, 422, 423, 424, 430, 431, 433
+                              433, 434, 435, 436
          ncoeff = 728 for DE-406
-         ncoeff = 982 for DE-432, DE-432t
+         ncoeff = 938 for DE-432
+         ncoeff = 982 for DE-432t
+         ncoeff = 1122 for DE-436t
 */
