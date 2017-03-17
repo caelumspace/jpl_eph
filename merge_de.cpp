@@ -57,7 +57,7 @@ int merge_jpl_files( const char *output_filename, const int n_input_files,
 {
    void *jpl_eph = jpl_init_ephemeris( input_filenames[0], NULL, NULL);
    int i, j, de_number, kernel_size, kernel_days, rval = 0;
-   FILE *ifile, *ofile;
+   FILE *ifile, *ofile = NULL;
    struct jpl_file *idata = (struct jpl_file *)calloc( n_input_files,
                                              sizeof( struct jpl_file));
    char *buff = NULL;
@@ -187,7 +187,8 @@ int merge_jpl_files( const char *output_filename, const int n_input_files,
    if( buff)
       free( buff);
    free( idata);
-   fclose( ofile);
+   if( ofile)
+      fclose( ofile);
    return( rval);
 }
 
