@@ -1,9 +1,13 @@
 # Makefile for gcc (and MinGW,  and clang)
-# Note dependence of 'sub_eph' on the 'lunar' library.  This is available
-# at https://github.com/Bill-Gray/lunar .
-# Note also that 'sub_eph' is the last file to be built.  You can make
-# everything else and ignore the missing dependency error if you aren't
-# interested in building 'sub_eph'.
+# Usage: make [CLANG=Y] [XCOMPILE=Y] [MSWIN=Y] [tgt]
+#
+# [all|asc2eph|dump_eph|eph2asc|ftest|merge_de|testeph|sub_eph]
+#
+# Note 'all' does _not_ build 'sub_eph'.  'sub_eph', depends on the 'lunar'
+# library,  available at https://github.com/Bill-Gray/lunar .  Get that,
+# make and 'make install' it,  and _then_ do 'make sub_eph' if you really
+# need the ability to extract a section of a DE ephemeris file.
+#
 #	'XCOMPILE' = cross-compile for Windows,  using MinGW,  on a Linux/BSD box
 #	'MSWIN' = compile for Windows,  using MinGW,  on a Windows machine
 #	'CLANG' = use clang instead of GCC;  Linux/BSD only
@@ -29,8 +33,16 @@ ifdef CLANG
 	LIB=-lm
 endif
 
+
+# I'm using 'mkdir -p' to avoid error messages if the directory exists.
+# It may fail on very old systems,  and will probably fail on non-POSIX
+# systems.  If so,  change to '-mkdir' and ignore errors.
+
 ifdef MSWIN
 	EXE=.exe
+	MKDIR=-mkdir
+else
+	MKDIR=mkdir -p
 endif
 
 ifdef XCOMPILE
@@ -38,12 +50,12 @@ ifdef XCOMPILE
 	EXE=.exe
 endif
 
-all: asc2eph$(EXE) dump_eph$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) testeph$(EXE) sub_eph$(EXE)
+all: asc2eph$(EXE) dump_eph$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) testeph$(EXE)
 
 install:
-	-mkdir $(INSTALL_DIR)/include
+	$(MKDIR) $(INSTALL_DIR)/include
 	cp jpleph.h $(INSTALL_DIR)/include
-	-mkdir $(INSTALL_DIR)/lib
+	$(MKDIR) $(INSTALL_DIR)/lib
 	cp libjpl.a $(INSTALL_DIR)/lib
 
 uninstall:
