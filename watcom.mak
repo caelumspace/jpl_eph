@@ -22,24 +22,28 @@ clean:
    del sub_eph.exe
    del testeph.obj
    del testeph.exe
+   del wjpleph.lib
 
-eph2asc.exe:     eph2asc.obj jpleph.obj
-   wcl386 -zq -k20000 eph2asc.obj jpleph.obj
+eph2asc.exe:     eph2asc.obj wjpleph.lib
+   wcl386 -zq -k20000 eph2asc.obj wjpleph.lib
 
-dump_eph.exe:     dump_eph.obj jpleph.obj
-   wcl386 -zq -k20000 dump_eph.obj jpleph.obj
+dump_eph.exe:     dump_eph.obj wjpleph.lib
+   wcl386 -zq -k20000 dump_eph.obj wjpleph.lib
 
-testeph.exe:      testeph.obj jpleph.obj
-   wcl386 -zq -k20000 testeph.obj jpleph.obj
+testeph.exe:      testeph.obj wjpleph.lib
+   wcl386 -zq -k20000 testeph.obj wjpleph.lib
 
-sub_eph.exe:      sub_eph.obj jpleph.obj
-   wcl386 -zq -k20000 sub_eph.obj jpleph.obj wafuncs.lib
+sub_eph.exe:      sub_eph.obj wjpleph.lib
+   wcl386 -zq -k20000 sub_eph.obj wjpleph.lib wafuncs.lib
 
 asc2eph.exe:          asc2eph.obj f_strtod.obj
    wcl386 -zq -k20000 asc2eph.obj f_strtod.obj
 
-merge_de.exe: merge_de.obj jpleph.obj
-   wcl386 -zq -k20000 merge_de.obj jpleph.obj
+merge_de.exe: merge_de.obj wjpleph.lib
+   wcl386 -zq -k20000 merge_de.obj wjpleph.lib
+
+wjpleph.lib: jpleph.obj
+   wlib -q wjpleph.lib +jpleph.obj
 
 CFLAGS=-W4 -Ox -j -4r -s -zq
 
