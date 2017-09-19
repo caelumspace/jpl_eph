@@ -4,11 +4,11 @@
 all: asc2eph.exe dump_eph.exe eph2asc.exe merge_de.exe testeph.exe sub_eph.exe
 
 !ifdef BITS_32
-COMMON_FLAGS=-nologo -W3
+COMMON_FLAGS=-nologo -W3 -EHsc -c -FD
 LIBNAME=lunar
 RM=rm
 !else
-COMMON_FLAGS=-nologo -W3 -D_CRT_SECURE_NO_WARNINGS
+COMMON_FLAGS=-nologo -W3 -EHsc -c -FD -D_CRT_SECURE_NO_WARNINGS
 LIBNAME=lunar64
 RM=del
 !endif
@@ -32,7 +32,7 @@ clean:
    $(RM) testeph.obj
    $(RM) testeph.exe
 
-testeph.exe:    testeph.obj jpleph.dll
+testeph.exe:    testeph.obj jpleph.lib
    link /nologo testeph.obj jpleph.lib
 
 merge_de.exe:   merge_de.obj jpleph.lib
@@ -47,18 +47,26 @@ dump_eph.exe:   dump_eph.obj jpleph.lib
 asc2eph.exe:    asc2eph.obj f_strtod.obj
    link /nologo asc2eph.obj f_strtod.obj
 
-sub_eph.exe:    sub_eph.obj jpleph.dll
+sub_eph.exe:    sub_eph.obj jpleph.lib
    link /nologo sub_eph.obj jpleph.lib $(LIBNAME).lib
 
 jpleph.lib: jpleph.obj
    $(RM) jpleph.lib
+!ifdef DLL
    $(RM) jpleph.dll
    link /nologo /DLL /IMPLIB:jpleph.lib /DEF:jpleph.def jpleph.obj
+!else
+   lib /OUT:jpleph.lib jpleph.obj
+!endif
 
-CFLAGS=-Ox -EHsc -c $(COMMON_FLAGS)
+CFLAGS=-Ox -MT $(COMMON_FLAGS)
 
 jpleph.obj: jpleph.cpp
+!ifdef DLL
    cl $(CFLAGS) -LD jpleph.cpp
+!else
+   cl $(CFLAGS)     jpleph.cpp
+!endif
 
 sub_eph.obj: sub_eph.cpp
    cl $(CFLAGS) -DTEST_MAIN sub_eph.cpp
