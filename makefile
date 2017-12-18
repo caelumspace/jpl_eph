@@ -16,6 +16,7 @@
 CFLAGS=-Wall -O3 -Wextra -pedantic -I $(INSTALL_DIR)/include
 CC=g++
 RM=-rm
+LIB=-lm
 
 # You can have your include files in ~/include and libraries in
 # ~/lib,  in which case only the current user can use them;  or
@@ -30,7 +31,6 @@ endif
 
 ifdef CLANG
 	CC=clang
-	LIB=-lm
 endif
 
 
