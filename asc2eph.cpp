@@ -610,7 +610,6 @@ int main( const int argc, const char **argv)
       errprt( 1070, "NOT HEADER");
 
    nrout  = 0;
-   out    = 0;
    db2z   = 0; /* formal only */
 
    if( determine_year_range( &year_start, &year_end, &year_step,
