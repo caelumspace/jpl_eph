@@ -73,7 +73,7 @@ and we're done.  */
 
 int main( const int argc, const char **argv)
 {
-   void *eph = jpl_init_ephemeris( argv[1], NULL, NULL);
+   void *eph;
    int rval = -1;
 
    if( argc < 4)
