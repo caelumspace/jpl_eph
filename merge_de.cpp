@@ -58,16 +58,20 @@ int merge_jpl_files( const char *output_filename, const int n_input_files,
    void *jpl_eph = jpl_init_ephemeris( input_filenames[0], NULL, NULL);
    int i, j, de_number, kernel_size, kernel_days, rval = 0;
    FILE *ifile, *ofile = NULL;
-   struct jpl_file *idata = (struct jpl_file *)calloc( n_input_files,
-                                             sizeof( struct jpl_file));
+   struct jpl_file *idata;
    char *buff = NULL;
 
-   if( !jpl_eph || !idata)
+   if( !jpl_eph)
       return( MERGE_ERR_INITIALIZING);
+
    de_number = (int)jpl_get_long( jpl_eph, JPL_EPHEM_EPHEMERIS_VERSION);
    kernel_days = (int)( jpl_get_double( jpl_eph, JPL_EPHEM_STEP) + .5);
    kernel_size = jpl_get_long( jpl_eph, JPL_EPHEM_KERNEL_SIZE);
    jpl_close_ephemeris( jpl_eph);
+
+   idata = (struct jpl_file *)calloc( n_input_files, sizeof( struct jpl_file));
+   if( !idata)
+      return( MERGE_ERR_INITIALIZING);
 
    for( i = 0; !rval && i < n_input_files; i++)
       {
@@ -99,7 +103,10 @@ int merge_jpl_files( const char *output_filename, const int n_input_files,
       }
 
    if( rval)
+      {
+      free( idata);
       return( rval);
+      }
                    /* OK, now sort by date: */
    for( i = 0; i < n_input_files; i++)
       for( j = 0; j < i; j++)
