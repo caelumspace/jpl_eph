@@ -15,7 +15,7 @@
 
 CFLAGS=-Wall -O3 -Wextra -pedantic -I $(INSTALL_DIR)/include
 CC=g++
-RM=-rm
+RM=rm -f
 LIB=-lm
 
 # You can have your include files in ~/include and libraries in
