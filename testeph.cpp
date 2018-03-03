@@ -128,7 +128,8 @@ and roundoff in the test files.  (For example,  the 'testpo' files for DE-200,
 DE-405,  and the earlier 'testpo.406' gave data rounded to 13 decimal places,
 so you get errors up to 5e-14 from that source alone.  Other 'testpo' files
 that I've seen go to 20 places.  See the comments about the 'roundoff_error'
-variable below.)
+variable below:  it will equal 5e-14 if the 'testpo' file has thirteen digits
+after the decimal point,  5e-21 if it has twenty digits,  etc.)
 
    Accounting for machine precision error is trickier.  Somewhat arbitrarily,
 I decided that after doing all the Chebyshev math,  it would be reasonable to
@@ -157,7 +158,7 @@ static double max_accepted_error( const int ntarg, const int ncoord)
 
    if( ntarg <= 13 && ncoord <= 3)
       rval = 1.e-14;    /* planet posn; 1e-14 AU = 1.5 mm */
-   else if( ntarg <= 13 && ncoord >= 3)
+   else if( ntarg <= 13 && ncoord > 3)
       rval = 2e-17;     /* planet velocity; 2e-17 AU/day = 3 microns/day */
    else if( ntarg == 15 && ncoord > 3)       /* lunar libration rate: */
       rval = 1e-19;                    /* 1e-19 rad/day = 2e-14 arcsec/day */
