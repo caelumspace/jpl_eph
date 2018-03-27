@@ -17,17 +17,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 02110-1301, USA.    */
 
-            /* A JPL binary ephemeris header contains five doubles and */
-            /* (up to) 41 int32_t integers,  so:                          */
-#define JPL_HEADER_SIZE (5 * sizeof( double) + 41 * sizeof( int32_t))
-            /* ...also known as 5 * 8 + 41 * 4 = 204 bytes.   */
-
-
             /* Thus far,  no DE ephems use eighteen terms in the Chebyshev */
             /* expansion.  There's an assert to catch it if this changes.. */
 #define MAX_CHEBY          18
-
-#pragma pack(1)
 
 struct interpolation_info
    {
@@ -53,7 +45,6 @@ struct jpl_eph_data {
    struct interpolation_info iinfo;
    FILE *ifile;
    };
-#pragma pack()
 
 /* 2014 Mar 25:  notes about the file structure :
 

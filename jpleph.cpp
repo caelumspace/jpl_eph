@@ -62,6 +62,7 @@ details of the implementation encapsulated.
 
 /**** include variable and type definitions, specific for this C version */
 
+#include "get_bin.h"
 #include "jpleph.h"
 #include "jpl_int.h"
 
@@ -70,12 +71,74 @@ details of the implementation encapsulated.
 
 double DLL_FUNC jpl_get_double( const void *ephem, const int value)
 {
-   return( *(double *)( (char *)ephem + value));
+   const struct jpl_eph_data *tptr = (const struct jpl_eph_data *)ephem;
+   double rval;
+
+   switch( value)
+      {
+      case JPL_EPHEM_START_JD:
+         rval = tptr->ephem_start;
+         break;
+      case JPL_EPHEM_END_JD:
+         rval = tptr->ephem_end;
+         break;
+      case JPL_EPHEM_STEP:
+         rval = tptr->ephem_step;
+         break;
+      case JPL_EPHEM_AU_IN_KM:
+         rval = tptr->au;
+         break;
+      case JPL_EPHEM_EARTH_MOON_RATIO:
+         rval = tptr->emrat;
+         break;
+      default:
+         {
+         const int tval = value - JPL_EPHEM_IPT_ARRAY;
+
+         if( tval >= 0 && tval < 45)
+            rval = tptr->ipt[tval / 3][tval % 3];
+         else
+            {
+            rval = -1;
+            assert( rval);
+            }
+         }
+         break;
+      }
+   return( rval);
 }
 
 long DLL_FUNC jpl_get_long( const void *ephem, const int value)
 {
-   return( *(int32_t *)( (char *)ephem + value));
+   const struct jpl_eph_data *tptr = (const struct jpl_eph_data *)ephem;
+   long rval;
+
+   switch( value)
+      {
+      case JPL_EPHEM_N_CONSTANTS:
+         rval = tptr->ncon;
+         break;
+      case JPL_EPHEM_EPHEMERIS_VERSION:
+         rval = tptr->ephemeris_version;
+         break;
+      case JPL_EPHEM_KERNEL_SIZE:
+         rval = tptr->kernel_size;
+         break;
+      case JPL_EPHEM_KERNEL_RECORD_SIZE:
+         rval = tptr->recsize;
+         break;
+      case JPL_EPHEM_KERNEL_NCOEFF:
+         rval = tptr->ncoeff;
+         break;
+      case JPL_EPHEM_KERNEL_SWAP_BYTES:
+         rval = tptr->swap_bytes;
+         break;
+      default:
+         rval = 1;
+         assert( rval);
+         break;
+      }
+   return( rval);
 }
 
 
@@ -673,6 +736,11 @@ int DLL_FUNC jpl_init_error_code( void)
 
    /* ...which comes out to 2856.  See comments in 'jpl_int.h'.   */
 
+            /* A JPL binary ephemeris header contains five doubles and */
+            /* (up to) 41 int32_t integers,  so:                          */
+#define JPL_HEADER_SIZE (5 * sizeof( double) + 41 * sizeof( int32_t))
+
+            /* ...also known as 5 * 8 + 41 * 4 = 204 bytes.   */
 /****************************************************************************
 **    jpl_init_ephemeris( ephemeris_filename, nam, val, n_constants)       **
 *****************************************************************************
@@ -700,6 +768,7 @@ void * DLL_FUNC jpl_init_ephemeris( const char *ephemeris_filename,
    FILE *ifile = fopen( ephemeris_filename, "rb");
    struct jpl_eph_data *rval;
    struct jpl_eph_data temp_data;
+   char header[JPL_HEADER_SIZE];
 
    init_err_code = 0;
    temp_data.ifile = ifile;
@@ -709,8 +778,17 @@ void * DLL_FUNC jpl_init_ephemeris( const char *ephemeris_filename,
       init_err_code = JPL_INIT_FREAD_FAILED;
    else if( fseek( ifile, 2652L, SEEK_SET))
       init_err_code = JPL_INIT_FSEEK_FAILED;
-   else if( fread( &temp_data, JPL_HEADER_SIZE, 1, ifile) != 1)
+   else if( fread( header, JPL_HEADER_SIZE, 1, ifile) != 1)
       init_err_code = JPL_INIT_FREAD2_FAILED;
+
+   temp_data.ephem_start = get_double( header);
+   temp_data.ephem_end   = get_double( header + 8);
+   temp_data.ephem_step  = get_double( header + 16);
+   temp_data.ncon        = get32bits( header + 24);
+   temp_data.au          = get_double( header + 28);
+   temp_data.emrat       = get_double( header + 36);
+   for( i = 0; i < 40; i++)
+      temp_data.ipt[i / 3][i % 3] = get32bits( header + 44 + i * 4);
 
    if( init_err_code)
       {
