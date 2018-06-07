@@ -92,17 +92,7 @@ double DLL_FUNC jpl_get_double( const void *ephem, const int value)
          rval = tptr->emrat;
          break;
       default:
-         {
-         const int tval = value - JPL_EPHEM_IPT_ARRAY;
-
-         if( tval >= 0 && tval < 45)
-            rval = tptr->ipt[tval / 3][tval % 3];
-         else
-            {
-            rval = -1;
-            assert( rval);
-            }
-         }
+         rval = -1;
          break;
       }
    return( rval);
@@ -134,8 +124,17 @@ long DLL_FUNC jpl_get_long( const void *ephem, const int value)
          rval = tptr->swap_bytes;
          break;
       default:
-         rval = 1;
-         assert( rval);
+         {
+         const int tval = value - JPL_EPHEM_IPT_ARRAY;
+
+         if( tval >= 0 && tval < 45)
+            rval = tptr->ipt[tval / 3][tval % 3];
+         else
+            {
+            rval = -1;
+            assert( rval);
+            }
+         }
          break;
       }
    return( rval);

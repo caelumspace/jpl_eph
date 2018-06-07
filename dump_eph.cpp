@@ -80,7 +80,7 @@ int main( const int argc, const char **argv)
          {
          for( i = 0; i < 15; i++)
             printf( "%5ld", jpl_get_long( p,
-                        JPL_EPHEM_IPT_ARRAY + (i * 3 + j) * sizeof( int32_t)));
+                        JPL_EPHEM_IPT_ARRAY + i * 3 + j));
          printf( "\n");
          }
       printf( "%d constants\n", n_constants);
