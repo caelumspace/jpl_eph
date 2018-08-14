@@ -61,10 +61,6 @@ int DLL_FUNC make_sub_ephem( void *ephem, const char *sub_filename,
                               const double start_jd, const double end_jd);
 double DLL_FUNC jpl_get_constant( const int idx, void *ephem, char *constant_name);
 
-#ifdef __cplusplus
-}
-#endif
-
          /* Following are constants used in          */
          /* jpl_get_double( ) and jpl_get_long( ):   */
 
@@ -108,3 +104,8 @@ int DLL_FUNC jpl_init_error_code( void);
 #define JPL_INIT_NOT_CALLED              -9
 
 #define jpl_get_pvsun( ephem) ((double *)((char *)ephem + 248))
+
+
+#ifdef __cplusplus
+}
+#endif
