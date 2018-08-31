@@ -62,15 +62,17 @@ details of the implementation encapsulated.
 
 /**** include variable and type definitions, specific for this C version */
 
-#if defined( __has_include) && !__has_include(<get_bin.h>)
-   #error   \
+#if defined( __has_include)
+   #if !__has_include(<get_bin.h>)
+      #error   \
         'get_bin.h' not found.  This project depends on the 'lunar'\
         library.  See www.github.com/Bill-Gray/lunar .\
         Clone that repository,  'make'  and 'make install' it.
            /* Just to make the error message cleaner,  we'll suppress */
            /* some  warnings that cascade from lack of get_bin.h. */
-   #define get32bits(d)  0
-   #define get_double( iptr) 0.
+      #define get32bits(d)  0
+      #define get_double( iptr) 0.
+   #endif
 #endif
 
 #include "get_bin.h"
