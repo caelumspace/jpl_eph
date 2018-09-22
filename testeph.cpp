@@ -423,7 +423,7 @@ int main( const int argc, const char **argv)
 
    printf( "%d lines read and tested in %.3f seconds\n", line,
            (double)( clock( ) - timer) / (double)CLOCKS_PER_SEC);
-   for( i = 0; i < n_errors; i++)
+   for( i = 0; i < (size_t)n_errors; i++)
       if( n_failures[i])
          printf( "%d lines failed with error code %d ('%s').\n",
                           n_failures[i], -(int)i, error_messages[i]);
