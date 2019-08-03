@@ -799,6 +799,7 @@ void * DLL_FUNC jpl_init_ephemeris( const char *ephemeris_filename,
    temp_data.ncon        = get32bits( header + 24);
    temp_data.au          = get_double( header + 28);
    temp_data.emrat       = get_double( header + 36);
+   temp_data.pvsun_t = -1e+80;   /* a time we can't use anyway */
    for( i = 0; i < 40; i++)
       temp_data.ipt[i / 3][i % 3] = get32bits( header + 44 + i * 4);
 
