@@ -99,4 +99,11 @@ Bytes 0- 83:  first line ("JPL Planetary Ephemeris DExxx/LExxx")
          ncoeff = 982 for DE-430t, 432t
          ncoeff = 1122 for DE-436t
          ncoeff = 1042 for DE-438t
+
+406 JD 625360.500 to 2816848.500 (years -2999.821 to 3000.146)
+410 JD 2436912.500 to 2458832.500 (years 1959.938 to 2019.952)
+422 JD 625648.500 to 2816816.500 (years -2999.032 to 3000.059)
+430 JD 2287184.500 to 2688976.500 (years 1550.005 to 2650.052)
+431 JD -3027215.500 to 7930192.500 (years -13000.029 to 16999.719)
+432 and on : JD 2287184.500 to 2688976.500 (years 1550.005 to 2650.052)
 */
