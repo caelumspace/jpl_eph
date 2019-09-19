@@ -4,9 +4,9 @@
 all: asc2eph.exe dump_eph.exe eph2asc.exe merge_de.exe testeph.exe sub_eph.exe
 
 !ifdef BITS_32
-COMMON_FLAGS=-nologo -W3 -EHsc -c -FD
+COMMON_FLAGS=-nologo -W3 -EHsc -c -FD -D_CRT_SECURE_NO_WARNINGS
 LIBNAME=lunar
-RM=rm
+RM=del
 !else
 COMMON_FLAGS=-nologo -W3 -EHsc -c -FD -D_CRT_SECURE_NO_WARNINGS
 LIBNAME=lunar64
@@ -59,7 +59,7 @@ jpleph.lib: jpleph.obj
    lib /OUT:jpleph.lib jpleph.obj
 !endif
 
-CFLAGS=-Ox -MT $(COMMON_FLAGS)
+CFLAGS=-O2 -MT $(COMMON_FLAGS)
 
 jpleph.obj: jpleph.cpp
 !ifdef DLL
