@@ -1,5 +1,5 @@
 # Makefile for gcc (and MinGW,  and clang)
-# Usage: make [CLANG=Y] [XCOMPILE=Y] [MSWIN=Y] [tgt]
+# Usage: make [CLANG=Y] [W64=Y] [W32=Y] [MSWIN=Y] [tgt]
 #
 # [all|asc2eph|dump_eph|eph2asc|ftest|merge_de|testeph|sub_eph]
 #
@@ -8,7 +8,8 @@
 # make and 'make install' it,  and _then_ do 'make sub_eph' if you really
 # need the ability to extract a section of a DE ephemeris file.
 #
-#	'XCOMPILE' = cross-compile for Windows,  using MinGW,  on a Linux/BSD box
+#	'W32'/'W64' = cross-compile for 32- or 64-bit Windows,  using MinGW,
+#        on a Linux/BSD box
 #	'MSWIN' = compile for Windows,  using MinGW,  on a Windows machine
 #	'CLANG' = use clang instead of GCC;  Linux/BSD only
 # None of these: compile using g++ on Linux or BSD
@@ -49,8 +50,17 @@ else
 	MKDIR=mkdir -p
 endif
 
-ifdef XCOMPILE
+LIB_DIR=$(INSTALL_DIR)/lib
+
+ifdef W64
 	CC=x86_64-w64-mingw32-g++
+ LIB_DIR=$(INSTALL_DIR)/win_lib
+	EXE=.exe
+endif
+
+ifdef W32
+	CC=i686-w64-mingw32-g++
+ LIB_DIR=$(INSTALL_DIR)/win_lib32
 	EXE=.exe
 endif
 
@@ -59,12 +69,12 @@ all: asc2eph$(EXE) dump_eph$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) teste
 install:
 	$(MKDIR) $(INSTALL_DIR)/include
 	cp jpleph.h $(INSTALL_DIR)/include
-	$(MKDIR) $(INSTALL_DIR)/lib
-	cp libjpl.a $(INSTALL_DIR)/lib
+	$(MKDIR) $(LIB_DIR)
+	cp libjpl.a $(LIB_DIR)
 
 uninstall:
 	-rm $(INSTALL_DIR)/include/jpleph.h
-	-rm $(INSTALL_DIR)/lib/libjpl.a
+	-rm $(LIB_DIR)/libjpl.a
 
 libjpl.a: jpleph.o
 	-$(RM) libjpl.a
@@ -89,7 +99,7 @@ merge_de$(EXE):          merge_de.o libjpl.a
 	$(CC) -o merge_de$(EXE) merge_de.o libjpl.a $(LIB)
 
 sub_eph$(EXE):          sub_eph.o libjpl.a
-	$(CC) -o sub_eph$(EXE) sub_eph.o libjpl.a -L $(INSTALL_DIR)/lib -llunar $(LIB)
+	$(CC) -o sub_eph$(EXE) sub_eph.o libjpl.a -L $(LIB_DIR) -llunar $(LIB)
 
 sub_eph.o: sub_eph.cpp
 	$(CC) $(CFLAGS) -c -DTEST_MAIN sub_eph.cpp
