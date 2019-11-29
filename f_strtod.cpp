@@ -135,10 +135,10 @@ inline long double ten_power( int exponent)
 
    -- A string such as 3.141592e-4945 is well within the range of an
 80-bit long double.  However,  it'll get read in as 3141592 multiplied
-by 10^-4952,  and that last is outside the range of long doubles.
-Which is why there's a bit of code starting with 'if( exponent >= 4096)'.
-That will make the values to be multiplied 3.141592e+4102 and 10^-856,
-both within the range of long doubles.
+by 10^-4951,  and that last is outside the range of long doubles.
+Which is why there's a bit of code starting with 'if( exponent >=
+OVER_THE_TOP_EXPONENT)'. That will make the values to be multiplied
+3.141592e-4090 and 10^-855, both within the range of long doubles.
 
    -- Microsoft doesn't "get" 80-bit doubles;  to them,  long doubles
 and doubles are the same thing.  (Insert anti-MS rant here;  I doubt
