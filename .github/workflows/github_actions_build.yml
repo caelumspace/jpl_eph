@@ -45,3 +45,4 @@ jobs:
         set CL=/I"./myincl"
         copy lunar\*.lib .
         nmake -f vc.mak
+      shell: cmd
