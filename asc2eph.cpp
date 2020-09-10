@@ -275,9 +275,9 @@ static int get_three_doubles( char *iline, double *ovals)
 int main( const int argc, const char **argv)
 {
     char header[14];
-    char buff[102];
-    char path_to_ascii_files[_MAX_PATH];
-    char output_filename[_MAX_PATH];
+    char buff[300];
+    char path_to_ascii_files[256];
+    char output_filename[256];
     double jd1 = -99999999., jd2 = 99999999., db2z, *db;
     size_t i, j;
     unsigned ksize, n;
@@ -350,9 +350,9 @@ int main( const int argc, const char **argv)
       strcat( path_to_ascii_files, "\\");
 #endif
    if( override_header_name)
-      sprintf( buff, "%s%s", path_to_ascii_files, override_header_name);
+      snprintf( buff, sizeof( buff), "%s%s", path_to_ascii_files, override_header_name);
    else
-      sprintf( buff, "%sheader.%s", path_to_ascii_files, de_num);
+      snprintf( buff, sizeof( buff), "%sheader.%s", path_to_ascii_files, de_num);
 /****************************************************************************/
    ifile = fopen( buff, "rb");
    if( !ifile)
