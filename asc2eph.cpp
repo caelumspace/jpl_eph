@@ -137,6 +137,7 @@ static FILE *get_ascii_de_file(
       const char *format_string = (i ? "%sasc%1c%05d.%s":
                                        "%sasc%1c%04d.%s");
 
+      assert( year > -30000 && year < 30000);
       sprintf( buff, format_string, path_to_ascii_files,
                  (year < 0 ? 'm' : 'p'), abs( year), de_num);
       rval = fopen( buff, "rb");
