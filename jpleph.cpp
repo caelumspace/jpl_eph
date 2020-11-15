@@ -63,7 +63,7 @@ details of the implementation encapsulated.
 /**** include variable and type definitions, specific for this C version */
 
 #if defined( __has_include)
-   #if !__has_include(<get_bin.h>)
+   #if !__has_include("get_bin.h")
       #error   \
         'get_bin.h' not found.  This project depends on the 'lunar'\
         library.  See www.github.com/Bill-Gray/lunar .\
