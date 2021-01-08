@@ -163,7 +163,7 @@ static int determine_year_range( int *year_start, int *year_end,
              int *year_step, const char *path_to_ascii_files, const char *de_num)
 {
    int year;
-   const int max_year = (atoi( de_num) == 431 ? 19000 : 6000);
+   int max_year = 6000;
    unsigned n_found = 0;
    FILE *ifile;
 
@@ -184,6 +184,7 @@ static int determine_year_range( int *year_start, int *year_end,
             *year_step = year - *year_start;
          n_found++;
          *year_end = year;
+         max_year += *year_step;
          }
 #ifdef DEBUGGING_STATEMENTS
       if( n_found)
