@@ -64,7 +64,7 @@ ifdef W32
 	EXE=.exe
 endif
 
-all: asc2eph$(EXE) dump_eph$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) testeph$(EXE)
+all: asc2eph$(EXE) dump_eph$(EXE) eph2$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) testeph$(EXE)
 
 install:
 	$(MKDIR) $(INSTALL_DIR)/include
@@ -92,6 +92,9 @@ ftest$(EXE):          ftest.o f_strtod.o
 eph2asc$(EXE):          eph2asc.o libjpl.a
 	$(CC) -o eph2asc$(EXE) eph2asc.o libjpl.a $(LIB)
 
+eph2$(EXE):             eph2.o libjpl.a
+	$(CC) -o eph2$(EXE)    eph2.o libjpl.a $(LIB)
+
 dump_eph$(EXE):          dump_eph.o libjpl.a
 	$(CC) -o dump_eph$(EXE) dump_eph.o libjpl.a $(LIB)
 
@@ -112,6 +115,7 @@ clean:
 	$(RM) asc2eph$(EXE)
 	$(RM) dump_eph$(EXE)
 	$(RM) eph2asc$(EXE)
+	$(RM) eph2$(EXE)
 	$(RM) ftest$(EXE)
 	$(RM) merge_de$(EXE)
 	$(RM) sub_eph$(EXE)
