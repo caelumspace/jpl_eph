@@ -70,12 +70,14 @@ static double vector_length( const double *a)
    return( sqrt( rval2));
 }
 
+#define SOLAR_SYSTEM_BARYCENTER 12
+
 int main( const int argc, const char **argv)
 {
    double state_vect2[6], jd = atof( argv[3]);
    const int home_planet = atoi( argv[1]), planet_no = atoi( argv[2]);
    double dist = 0., pvsun[6];
-   int i, pass, center = 12;
+   int i, pass;
    void *p;
 #ifdef _WIN32
    const char *filename = "d:\\guide_b\\jpl_eph\\sub_de.406";
@@ -83,8 +85,6 @@ int main( const int argc, const char **argv)
    const char *filename = "../de431/jpleph.431";
 #endif
 
-   if( argc > 4)
-      center = atoi( argv[4]);
    printf( "Year approx %.3lf\n", 2000. + (jd - 2451545.) / 365.25);
    p = jpl_init_ephemeris( filename, NULL, NULL);
    if( !p)
@@ -92,7 +92,7 @@ int main( const int argc, const char **argv)
       printf( "JPL data '%s' not loaded\n", filename);
       return( -1);
       }
-   jpl_pleph( p, jd, center, home_planet, state_vect2, 1);
+   jpl_pleph( p, jd, SOLAR_SYSTEM_BARYCENTER, home_planet, state_vect2, 1);
    printf( "Observer state vector:\n");
    show_state_vector( state_vect2);
 // for( i = 0; i < 3; i++)
@@ -103,7 +103,7 @@ int main( const int argc, const char **argv)
       char buff[30];
 
       jpl_pleph( p, jd - dist * AU_IN_KM / (SPEED_OF_LIGHT * 86400.),
-                     center, planet_no, state_vect, 1);
+                     SOLAR_SYSTEM_BARYCENTER, planet_no, state_vect, 1);
       if( pass == 3)
          {
          for( i = 0; i < 3; i++)
