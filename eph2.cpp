@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
 #include "watdefs.h"
 // #include "lunar.h"
 // #include "afuncs.h"
@@ -33,9 +34,9 @@ static void show_state_vector( const double *state_vect)
    double r2 = state_vect[0] * state_vect[0] +
                state_vect[1] * state_vect[1] + state_vect[2] * state_vect[2];
 
-   printf( "%.11lf %.11lf %.11lf  %.11lf\n", state_vect[0], state_vect[1],
+   printf( "%.11f %.11f %.11f  %.11f\n", state_vect[0], state_vect[1],
             state_vect[2], sqrt( r2));
-   printf( "%.11lf %.11lf %.11lf\n", state_vect[3], state_vect[4],
+   printf( "%.11f %.11f %.11f\n", state_vect[3], state_vect[4],
             state_vect[5]);
 }
 
@@ -85,7 +86,8 @@ int main( const int argc, const char **argv)
    const char *filename = "../de431/jpleph.431";
 #endif
 
-   printf( "Year approx %.3lf\n", 2000. + (jd - 2451545.) / 365.25);
+   assert( argc >= 4);
+   printf( "Year approx %.3f\n", 2000. + (jd - 2451545.) / 365.25);
    p = jpl_init_ephemeris( filename, NULL, NULL);
    if( !p)
       {
@@ -109,8 +111,8 @@ int main( const int argc, const char **argv)
          for( i = 0; i < 3; i++)
             pvsun[i] = state_vect[i] + jpl_get_pvsun( p)[i];
 //          pvsun[i] += state_vect[i];
-         printf( "%.11lf %.11lf %.11lf\n", pvsun[0], pvsun[1], pvsun[2]);
-         printf( "Dist to sun: %.11lf\n", vector_length( pvsun));
+         printf( "%.11f %.11f %.11f\n", pvsun[0], pvsun[1], pvsun[2]);
+         printf( "Dist to sun: %.11f\n", vector_length( pvsun));
          }
       for( i = 0; i < 6; i++)
          state_vect[i] -= state_vect2[i];
@@ -125,7 +127,7 @@ int main( const int argc, const char **argv)
       ang = -asin( state_vect[2] / dist) * 180. / PI;
       format_base_sixty( buff, ang);
       buff[14] = '\0';
-      printf( "%s   %.11lf (%.3lf km)\n", buff, dist, dist * AU_IN_KM);
+      printf( "%s   %.11f (%.3f km)\n", buff, dist, dist * AU_IN_KM);
       }
    jpl_close_ephemeris( p);
    return( 0);
