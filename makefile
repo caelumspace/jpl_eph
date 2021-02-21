@@ -14,7 +14,7 @@
 #	'CLANG' = use clang instead of GCC;  Linux/BSD only
 # None of these: compile using g++ on Linux or BSD
 
-CFLAGS=-Wall -O3 -Wextra -pedantic -I $(INSTALL_DIR)/include
+CFLAGS=-Wall -O3 -Wextra -pedantic -I $(INSTALL_DIR)/include $(ADDED_CFLAGS)
 CC=g++
 RM=rm -f
 LIB=-lm
