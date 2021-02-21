@@ -1015,7 +1015,7 @@ double DLL_FUNC jpl_get_constant( const int idx, void *ephem, char *constant_nam
 }
 
 
-char DLL_FUNC *jpl_get_ephem_name( const void *ephem)
+const char * DLL_FUNC jpl_get_ephem_name( const void *ephem)
 {
    struct jpl_eph_data *eph = (struct jpl_eph_data *)ephem;
 
