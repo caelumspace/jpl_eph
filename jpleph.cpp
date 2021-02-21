@@ -810,7 +810,16 @@ void * DLL_FUNC jpl_init_ephemeris( const char *ephemeris_filename,
       return( NULL);
       }
 
-   de_version = atoi( title + 26);
+   if( !memcmp( title, "INPOP", 5))
+      {
+      de_version = atoi( title + 5);
+      sscanf( title, "%30s", temp_data.name);
+      }
+   else
+      {
+      de_version = atoi( title + 26);
+      sscanf( title + 24, "%30s", temp_data.name);
+      }
 
           /* A small piece of trickery:  in the binary file,  data is stored */
           /* for ipt[0...11],  then the ephemeris version,  then the         */
@@ -1003,5 +1012,13 @@ double DLL_FUNC jpl_get_constant( const int idx, void *ephem, char *constant_nam
          }
       }
    return( rval);
+}
+
+
+char DLL_FUNC *jpl_get_ephem_name( const void *ephem)
+{
+   struct jpl_eph_data *eph = (struct jpl_eph_data *)ephem;
+
+   return( eph->name);
 }
 /*************************** THE END ***************************************/

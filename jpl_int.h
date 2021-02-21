@@ -44,6 +44,7 @@ struct jpl_eph_data {
    double *cache;
    struct interpolation_info iinfo;
    FILE *ifile;
+   char name[32];       /* "DE430t", "INPOP-19c",  etc. */
    };
 
 /* 2014 Mar 25:  notes about the file structure :
