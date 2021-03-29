@@ -818,7 +818,8 @@ void * DLL_FUNC jpl_init_ephemeris( const char *ephemeris_filename,
    else
       {
       de_version = atoi( title + 26);
-      sscanf( title + 24, "%30s", temp_data.name);
+      title[54] = '\0';
+      sscanf( title + 24, "%s", temp_data.name);
       }
 
           /* A small piece of trickery:  in the binary file,  data is stored */
