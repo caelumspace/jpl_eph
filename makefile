@@ -14,8 +14,12 @@
 #	'CLANG' = use clang instead of GCC;  Linux/BSD only
 # None of these: compile using g++ on Linux or BSD
 
-CFLAGS=-Wall -O3 -Wextra -pedantic -I $(INSTALL_DIR)/include $(ADDED_CFLAGS)
-CC=g++
+# As CC is an implicit variable, a simple CC?=g++ doesn't work.
+# We have to use this trick from https://stackoverflow.com/a/42958970
+ifeq ($(origin CC),default)
+	CC=g++
+endif
+CFLAGS+=-Wall -O3 -Wextra -pedantic -I $(INSTALL_DIR)/include $(ADDED_CFLAGS)
 RM=rm -f
 LIB=-lm
 
@@ -28,10 +32,11 @@ endif
 # (with root privileges) you can install them to /usr/local/include
 # and /usr/local/lib for all to enjoy.
 
+PREFIX?=~
 ifdef GLOBAL
 	INSTALL_DIR=/usr/local
 else
-	INSTALL_DIR=~
+	INSTALL_DIR=$(PREFIX)
 endif
 
 ifdef CLANG
