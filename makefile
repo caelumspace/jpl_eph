@@ -103,6 +103,9 @@ eph2$(EXE):             eph2.o libjpl.a
 dump_eph$(EXE):          dump_eph.o libjpl.a
 	$(CC) -o dump_eph$(EXE) dump_eph.o libjpl.a $(LIB)
 
+masses$(EXE):          masses.o libjpl.a
+	$(CC) -o masses$(EXE) masses.o libjpl.a $(LIB)
+
 merge_de$(EXE):          merge_de.o libjpl.a
 	$(CC) -o merge_de$(EXE) merge_de.o libjpl.a $(LIB)
 
