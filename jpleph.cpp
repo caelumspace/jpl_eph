@@ -811,7 +811,8 @@ void * DLL_FUNC jpl_init_ephemeris( const char *ephemeris_filename,
    if( !memcmp( title, "INPOP", 5))
       {
       de_version = atoi( title + 5);
-      sscanf( title, "%30s", temp_data.name);
+      title[30] = '\0';
+      sscanf( title, "%s", temp_data.name);
       }
    else
       {
