@@ -138,8 +138,9 @@ static FILE *get_ascii_de_file(
                                        "%sasc%1c%04d.%s");
 
       assert( year > -30000 && year < 30000);
-      sprintf( buff, format_string, path_to_ascii_files,
+      snprintf( buff, _MAX_PATH, format_string, path_to_ascii_files,
                  (year < 0 ? 'm' : 'p'), abs( year), de_num);
+      assert( _MAX_PATH - 1 > strlen( buff));
       rval = fopen( buff, "rb");
       }
    return( rval);
@@ -539,7 +540,7 @@ int main( const int argc, const char **argv)
 /*   open direct-access output file (defaults to 'jpleph.xxx') */
 
    if( !*output_filename)
-      sprintf( output_filename, "jpleph.%s", de_num);
+      snprintf( output_filename, sizeof( output_filename), "jpleph.%s", de_num);
 /***************************************************************************/
 
    ofile=fopen( output_filename, "wb");

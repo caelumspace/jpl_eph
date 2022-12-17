@@ -290,7 +290,7 @@ int main( const int argc, const char **argv)
      if( extension)
         strcat( buff + i, extension);
      else
-        sprintf( buff + strlen( buff), ".%3ld",
+        snprintf( buff + strlen( buff), sizeof( buff) - strlen( buff), ".%3ld",
             jpl_get_long( ephem, JPL_EPHEM_EPHEMERIS_VERSION));
      }
 
