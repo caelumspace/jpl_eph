@@ -19,7 +19,7 @@
 ifeq ($(origin CC),default)
 	CC=g++
 endif
-CFLAGS+=-Wall -O3 -Wextra -pedantic -I $(INSTALL_DIR)/include $(ADDED_CFLAGS)
+CFLAGS+=-Wall -O3 -Wextra -Werror -pedantic -I $(INSTALL_DIR)/include $(ADDED_CFLAGS)
 RM=rm -f
 LIB=-lm
 
@@ -69,7 +69,7 @@ ifdef W32
 	EXE=.exe
 endif
 
-all: asc2eph$(EXE) dump_eph$(EXE) eph2$(EXE) eph2asc$(EXE) ftest$(EXE) merge_de$(EXE) testeph$(EXE)
+all: asc2eph$(EXE) dump_eph$(EXE) eph2$(EXE) eph2asc$(EXE) ftest$(EXE) masses$(EXE) merge_de$(EXE) testeph$(EXE)
 
 install:
 	$(MKDIR) $(INSTALL_DIR)/include
@@ -125,6 +125,7 @@ clean:
 	$(RM) eph2asc$(EXE)
 	$(RM) eph2$(EXE)
 	$(RM) ftest$(EXE)
+	$(RM) masses$(EXE)
 	$(RM) merge_de$(EXE)
 	$(RM) sub_eph$(EXE)
 	$(RM) testeph$(EXE)
