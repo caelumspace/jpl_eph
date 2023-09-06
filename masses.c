@@ -17,7 +17,7 @@ int main( const int argc, const char **argv)
    const char *names[N_MASSES] = { "Sun ", "Merc", "Venu", "EMB ", "Mars",
            "Jupi", "Satu", "Uran", "Nept", "Plut", "Eart", "Moon",
            "Cere", "Pall", "Juno", "Vest"   };
-   const long seconds_per_day = 86400.;
+   const double seconds_per_day = 86400.;
 
    if( argc != 2)
       {
