@@ -17,7 +17,8 @@
 # As CC is an implicit variable, a simple CC?=g++ doesn't work.
 # We have to use this trick from https://stackoverflow.com/a/42958970
 ifeq ($(origin CC),default)
-	CC=g++
+	CC=gcc
+	CPP=g++
 endif
 CFLAGS+=-Wall -O3 -Wextra -Werror -pedantic -I $(INSTALL_DIR)/include $(ADDED_CFLAGS)
 RM=rm -f
@@ -25,6 +26,10 @@ LIB=-lm
 
 ifdef DEBUG
 	CFLAGS += -g
+endif
+
+ifdef UCHAR
+	CFLAGS += -funsigned-char
 endif
 
 # You can have your include files in ~/include and libraries in
@@ -41,6 +46,7 @@ endif
 
 ifdef CLANG
 	CC=clang
+	CPP=clang
 endif
 
 
@@ -58,13 +64,15 @@ endif
 LIB_DIR=$(INSTALL_DIR)/lib
 
 ifdef W64
-	CC=x86_64-w64-mingw32-g++
+	CC=x86_64-w64-mingw32-gcc
+	CPP=x86_64-w64-mingw32-g++
  LIB_DIR=$(INSTALL_DIR)/win_lib
 	EXE=.exe
 endif
 
 ifdef W32
-	CC=i686-w64-mingw32-g++
+	CC=i686-w64-mingw32-gcc
+	CPP=i686-w64-mingw32-g++
  LIB_DIR=$(INSTALL_DIR)/win_lib32
 	EXE=.exe
 endif
@@ -86,6 +94,9 @@ libjpl.a: jpleph.o
 	ar rv libjpl.a jpleph.o
 
 .cpp.o:
+	$(CPP) $(CFLAGS) -c $<
+
+.c.o:
 	$(CC) $(CFLAGS) -c $<
 
 asc2eph$(EXE):          asc2eph.o f_strtod.o
@@ -113,7 +124,7 @@ sub_eph$(EXE):          sub_eph.o libjpl.a
 	$(CC) -o sub_eph$(EXE) sub_eph.o libjpl.a -L $(LIB_DIR) -llunar $(LIB)
 
 sub_eph.o: sub_eph.cpp
-	$(CC) $(CFLAGS) -c -DTEST_MAIN sub_eph.cpp
+	$(CPP) $(CFLAGS) -c -DTEST_MAIN sub_eph.cpp
 
 testeph$(EXE):          testeph.o libjpl.a
 	$(CC) -o testeph$(EXE) testeph.o libjpl.a $(LIB)
