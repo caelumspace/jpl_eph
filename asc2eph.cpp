@@ -201,6 +201,11 @@ static int determine_year_range( int *year_start, int *year_end,
          *year_start -= *year_step;
          fclose( ifile);
          }
+   if( 1 == n_found)       /* year step wasn't actually determined */
+      {
+      *year_step = 10000;
+      *year_end = *year_start + *year_step;
+      }
    return( (n_found ? 0 : -1));
 }
 
