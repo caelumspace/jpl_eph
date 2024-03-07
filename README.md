@@ -34,3 +34,9 @@ On Windows,  run `nmake -f vc.mak` with MSVC++.  Optionally,  add
 
 Makefiles are also provided for the [OpenWATCOM](http://www.openwatcom.org) and
 [Digital Mars](http://www.digitalmars.com) compilers for DOS/Windows.
+
+
+
+
+
+cmake -B build -S . -G "Visual Studio 17 2022" -A x64
