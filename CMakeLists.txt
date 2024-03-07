@@ -16,11 +16,18 @@ option(BUILD_AS_DLL "Build the library as a DLL." OFF)
 option(TARGET_32_BIT "Target 32-bit architecture." OFF)
 
 # Define output directories based on architecture and build type
-if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
+# Determine architecture directory based on processor architecture and pointer size
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|ARM64)$")
+    set(ARCH_DIR "arm64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(amd64|x86_64)$")
     set(ARCH_DIR "x64")
-else() # 32-bit
-    set(ARCH_DIR "x86")
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    # Fallback for other 64-bit architectures without explicit matches above
+    set(ARCH_DIR "x64")
+else()
+    set(ARCH_DIR "x86") # Default to x86 for 32-bit architectures
 endif()
+
 
 # Use generator expressions to handle different configurations (Debug, Release, etc.)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${ARCH_DIR}/$<CONFIG>/lib)
@@ -29,7 +36,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${ARCH_DIR}/$<CONFIG>/bin
 
 
 # Compiler flags common to all builds
-set(COMMON_FLAGS "-O2 -MT -D_CRT_SECURE_NO_WARNINGS")
+set(COMMON_FLAGS "-O2 -D_CRT_SECURE_NO_WARNINGS")
+if(MSVC)
+    # For MSVC, re-add the /MT flag or other MSVC-specific flags
+    list(APPEND COMMON_FLAGS "/MT")
+endif()
 if(BUILD_AS_DLL)
     set(COMMON_FLAGS "${COMMON_FLAGS} -EHsc -LD -DNDEBUG")
 endif()
@@ -128,7 +139,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/ DESTINATION include)
 
 # Compiler and linker options for MSVC and GCC/Clang
 if(MSVC)
-    target_compile_options(${TARGET_LIB_NAME} PRIVATE /W3)
+    target_compile_options(${LIBNAME} PRIVATE "/W3" "/EHsc" "/D_CRT_SECURE_NO_WARNINGS" "/std:c++latest")
 else()
-    target_compile_options(${TARGET_LIB_NAME} PRIVATE -Wall)
+    target_compile_options(${LIBNAME} PRIVATE "-Wall" "-Wextra" "-pedantic" ${COMMON_FLAGS})
 endif()
