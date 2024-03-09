@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 # Project name and the language used
 project(JplEph VERSION 1.0 LANGUAGES CXX)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 20)
@@ -70,8 +71,16 @@ if(WIN32)
         set(LUNARLIB_NAME "lunar32.lib")
     endif()
     add_definitions(-DJPL_EPH_DLL=1)
+elseif(UNIX)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
+        set(TARGET_LIB_NAME "jpleph64")
+        set(LUNARLIB_NAME "liblunar64.a") # or "liblunar64.so" for shared library
+    else() # 32-bit
+        set(TARGET_LIB_NAME "jpleph32")
+        set(LUNARLIB_NAME "liblunar32.a") # or "liblunar32.so" for shared library
+    endif()
 else()
-    set(TARGET_LIB_NAME "jpleph")
+    message(FATAL_ERROR "Unsupported platform")
 endif()
 
 # Add library target
@@ -139,7 +148,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/ DESTINATION include)
 
 # Compiler and linker options for MSVC and GCC/Clang
 if(MSVC)
-    target_compile_options(${LIBNAME} PRIVATE "/W3" "/EHsc" "/D_CRT_SECURE_NO_WARNINGS" "/std:c++latest")
+    target_compile_options(${TARGET_LIB_NAME} PRIVATE "/W3" "/EHsc" "/D_CRT_SECURE_NO_WARNINGS" "/std:c++latest")
 else()
-    target_compile_options(${LIBNAME} PRIVATE "-Wall" "-Wextra" "-pedantic" ${COMMON_FLAGS})
+    target_compile_options(${TARGET_LIB_NAME} PRIVATE "-Wall" "-Wextra" "-pedantic" ${COMMON_FLAGS})
 endif()
