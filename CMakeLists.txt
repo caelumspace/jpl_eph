@@ -44,7 +44,7 @@ if(MSVC)
         list(APPEND COMMON_FLAGS "/MT")
     endif()
 else()
-    set(COMMON_FLAGS "-Wall" "-Wextra" "-pedantic" "-O2" "-D_CRT_SECURE_NO_WARNINGS")
+    set(COMMON_FLAGS "-Wall" "-Wextra" "-pedantic"  "-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
 
