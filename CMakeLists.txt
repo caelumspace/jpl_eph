@@ -37,13 +37,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${ARCH_DIR}/$<CONFIG>/bin
 
 
 # Compiler flags common to all builds
-set(COMMON_FLAGS "-O2 -D_CRT_SECURE_NO_WARNINGS")
 if(MSVC)
-    # For MSVC, re-add the /MT flag or other MSVC-specific flags
-    list(APPEND COMMON_FLAGS "/MT")
-endif()
-if(BUILD_AS_DLL)
-    set(COMMON_FLAGS "${COMMON_FLAGS} -EHsc -LD -DNDEBUG")
+    set(COMMON_FLAGS "/W3" "/EHsc" "/D_CRT_SECURE_NO_WARNINGS" "/std:c++latest") 
+    # Add /MT only if BUILD_AS_DLL is OFF
+    if(NOT BUILD_AS_DLL)
+        list(APPEND COMMON_FLAGS "/MT")
+    endif()
+else()
+    set(COMMON_FLAGS "-Wall" "-Wextra" "-pedantic" "-O2" "-D_CRT_SECURE_NO_WARNINGS")
 endif()
 
 
@@ -92,16 +93,8 @@ else()
     add_library(${TARGET_LIB_NAME} STATIC ${LIB_SOURCES})
 endif()
 
-# Compiler options and definitions for MSVC
-if(MSVC)
-    target_compile_options(${TARGET_LIB_NAME} PRIVATE /W3 /EHsc /D_CRT_SECURE_NO_WARNINGS /std:c++latest)
-    # Separate debug/release options
-    target_compile_options(${TARGET_LIB_NAME} PRIVATE "$<$<CONFIG:RELEASE>:/O2>")
-else()
-    target_compile_options(${TARGET_LIB_NAME} PRIVATE -Wall -Wextra -pedantic)
-    # Separate debug/release options
-    target_compile_options(${TARGET_LIB_NAME} PRIVATE "$<$<CONFIG:RELEASE>:-O2>")
-endif()
+# Apply common compiler flags
+target_compile_options(${TARGET_LIB_NAME} PRIVATE ${COMMON_FLAGS})
 
 # Link with the lunar library if needed
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_SYSTEM_PROCESSOR}/${CMAKE_BUILD_TYPE}/lib)
@@ -146,9 +139,3 @@ install(TARGETS ${TARGET_LIB_NAME}
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/ DESTINATION include)
 
 
-# Compiler and linker options for MSVC and GCC/Clang
-if(MSVC)
-    target_compile_options(${TARGET_LIB_NAME} PRIVATE "/W3" "/EHsc" "/D_CRT_SECURE_NO_WARNINGS" "/std:c++latest")
-else()
-    target_compile_options(${TARGET_LIB_NAME} PRIVATE "-Wall" "-Wextra" "-pedantic" ${COMMON_FLAGS})
-endif()
